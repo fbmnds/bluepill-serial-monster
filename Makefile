@@ -13,7 +13,8 @@ STUTIL		= st-util
 CPPCHECK	= cppcheck
 
 # STM32Cube Path
-STM32CUBE	= ${STM32CUBE_PATH}
+#STM32CUBE	= ${STM32CUBE_PATH}
+STM32CUBE       = /home/dev/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.6
 STM32_STARTUP	= $(STM32CUBE)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.s
 STM32_SYSINIT	= $(STM32CUBE)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f1xx.c
 STM32_LDSCRIPT	= $(STM32CUBE)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/linker/STM32F103XB_FLASH.ld
