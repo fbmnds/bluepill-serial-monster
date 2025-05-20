@@ -28,7 +28,7 @@ STM32_INCLUDES	+= -I$(STM32CUBE)/Drivers/CMSIS/Core_A/Include
 STM32_INCLUDES	+= -I$(STM32CUBE)/Drivers/CMSIS/Device/ST/STM32F4xx/Include
 
 DEFINES		= -DSTM32F411xE -DHSE_VALUE=8000000U
-CPUFLAGS	= -mthumb -mcpu=cortex-m3
+CPUFLAGS	= -mcpu=cortex-m4 -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb
 WARNINGS	= -Wall
 OPTIMIZATION	= -O3
 DEBUG		= -ggdb
