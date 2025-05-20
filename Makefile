@@ -1,7 +1,8 @@
 # General Target Settings
 TARGET	= bluepill-serial-monster
-SRCS	= main.c system_clock.c system_interrupts.c status_led.c usb_core.c usb_descriptors.c\
-	usb_io.c usb_uid.c usb_panic.c usb_cdc.c cdc_shell.c gpio.c device_config.c
+SRCS	= main.c system_clock.c
+# system_interrupts.c status_led.c usb_core.c usb_descriptors.c
+# usb_io.c usb_uid.c usb_panic.c usb_cdc.c cdc_shell.c gpio.c device_config.c
 
 # Toolchain & Utils
 CROSS_COMPILE	?= arm-none-eabi-
@@ -14,16 +15,19 @@ CPPCHECK	= cppcheck
 
 # STM32Cube Path
 #STM32CUBE	= ${STM32CUBE_PATH}
-STM32CUBE       = /home/dev/STM32Cube/Repository/STM32Cube_FW_F1_V1.8.6
-STM32_STARTUP	= $(STM32CUBE)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/startup_stm32f103xb.s
-STM32_SYSINIT	= $(STM32CUBE)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/system_stm32f1xx.c
-STM32_LDSCRIPT	= $(STM32CUBE)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/linker/STM32F103XB_FLASH.ld
+STM32CUBE       = /home/dev/STM32Cube/Repository/STM32Cube_FW_F4_V1.28.2
+STM32_STARTUP	= $(STM32CUBE)/Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc/startup_stm32f411xe.s
+STM32_SYSINIT	= $(STM32CUBE)/Drivers/CMSIS/Device/ST/STM32F4xx/Source/Templates/system_stm32f4xx.c
+#STM32_LDSCRIPT	= $(STM32CUBE)/Drivers/CMSIS/Device/ST/STM32F1xx/Source/Templates/gcc/linker/STM32F103XB_FLASH.ld
+STM32_LDSCRIPT	= STM32F411RETX_FLASH.ld
+
+
 
 STM32_INCLUDES	+= -I$(STM32CUBE)/Drivers/CMSIS/Core/Include
 STM32_INCLUDES	+= -I$(STM32CUBE)/Drivers/CMSIS/Core_A/Include
-STM32_INCLUDES	+= -I$(STM32CUBE)/Drivers/CMSIS/Device/ST/STM32F1xx/Include
+STM32_INCLUDES	+= -I$(STM32CUBE)/Drivers/CMSIS/Device/ST/STM32F4xx/Include
 
-DEFINES		= -DSTM32F103xB -DHSE_VALUE=8000000U
+DEFINES		= -DSTM32F411xE -DHSE_VALUE=8000000U
 CPUFLAGS	= -mthumb -mcpu=cortex-m3
 WARNINGS	= -Wall
 OPTIMIZATION	= -O3
