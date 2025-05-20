@@ -6,7 +6,7 @@
 
 #include <stm32f1xx.h>
 #include "system_clock.h"
-#include "usb.h"
+
 
 void system_clock_init() {
     RCC->CR |= RCC_CR_HSEON;
