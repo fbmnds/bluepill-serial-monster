@@ -26,6 +26,15 @@ typedef struct {
     pin_config_t cts_pin;
 } cdc_port_t;
 
+typedef struct {
+    GPIO_TypeDef *port;
+    uint16_t pin;
+    uint32_t moder;
+    uint32_t otyper;
+    uint32_t ospeedr;
+    uint32_t afr;
+} pin_t;
+
 extern const cdc_port_t port_config[USB_CDC_NUM_PORTS];
 
 #endif /* DEVICE_CONFIG_H */

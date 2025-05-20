@@ -4,50 +4,44 @@
  * Copyright (c) 2020 Kirill Kotyagin
  */
 
+
+#include <stm32f4xx.h>
+#include "device_config.h"
 #include "gpio.h"
 
-static void _gpio_enable_port(GPIO_TypeDef *port) {
-    int portnum = (((uint32_t)port - GPIOA_BASE) / (GPIOB_BASE - GPIOA_BASE));
-    RCC->APB2ENR |= RCC_APB2ENR_IOPAEN << portnum;
+
+
+#include "stm32f4xx.h"
+#include "device_config.h"
+
+static void _gpio_enable_port(uint8_t portnum) {
+    // Enable clock for GPIO port (STM32F4 uses AHB1 bus)
+    RCC->AHB1ENR |= (1 << portnum); // e.g., GPIOA=0, GPIOB=1, GPIOC=2
 }
 
-void gpio_pin_init(const gpio_pin_t *pin) {
-    if (pin->port) {
-        volatile uint32_t *crx = &pin->port->CRL + (pin->pin >> 3);
-        uint8_t crx_offset = (pin->pin & 0x07) << 2;
-        uint32_t modecfg = 0;
-        _gpio_enable_port(pin->port);
-        *crx &= ~((GPIO_CRL_CNF0 | GPIO_CRL_MODE0) << crx_offset);
-        if (pin->dir == gpio_dir_input) {
-            if (pin->pull == gpio_pull_floating) {
-                modecfg |= GPIO_CRL_CNF0_0;
-            } else {
-                modecfg |= GPIO_CRL_CNF0_1;
-                pin->port->BSRR = ((pin->pull == gpio_pull_up) ? GPIO_BSRR_BS0 : GPIO_BSRR_BR0) << pin->pin;
-            }
-        } else {
-            switch (pin->speed) {
-            case gpio_speed_unknown:
-            case gpio_speed_low:
-                modecfg |= GPIO_CRL_MODE0_1;
-                break;
-            case gpio_speed_medium:
-                modecfg |= GPIO_CRL_MODE0_0;
-                break;
-            case gpio_speed_high:
-                modecfg |= GPIO_CRL_MODE0;
-                break;
-            }
-            if (pin->output == gpio_output_od) {
-                modecfg |= GPIO_CRL_CNF0_0;
-            }
-            if (pin->func == gpio_func_alternate) {
-                modecfg |= GPIO_CRL_CNF0_1;
-            }
-        }
-        *crx |= (modecfg << crx_offset);
+void pin_init(pin_t *pin) {
+    if (!pin || !pin->port) return;
+
+    // Enable GPIO port clock
+    if (pin->port == GPIOA) _gpio_enable_port(0);
+    else if (pin->port == GPIOB) _gpio_enable_port(1);
+    else if (pin->port == GPIOC) _gpio_enable_port(2);
+    // Add other ports (GPIOD, GPIOE, etc.) if needed
+
+    GPIO_TypeDef *gpio = pin->port;
+    uint16_t p = pin->pin;
+
+    // Configure GPIO: mode, output type, speed, alternate function
+    gpio->MODER = (gpio->MODER & ~(3 << (p * 2))) | (pin->moder << (p * 2));
+    gpio->OTYPER = (gpio->OTYPER & ~(1 << p)) | (pin->otyper << p);
+    gpio->OSPEEDR = (gpio->OSPEEDR & ~(3 << (p * 2))) | (pin->ospeedr << (p * 2));
+    if (p < 8) {
+        gpio->AFR[0] = (gpio->AFR[0] & ~(15 << (p * 4))) | (pin->afr << (p * 4));
+    } else {
+        gpio->AFR[1] = (gpio->AFR[1] & ~(15 << ((p - 8) * 4))) | (pin->afr << ((p - 8) * 4));
     }
 }
+
 
 void gpio_pin_set(const gpio_pin_t *pin, int is_active) {
     if (pin->port) {
@@ -58,7 +52,7 @@ void gpio_pin_set(const gpio_pin_t *pin, int is_active) {
 
 int gpio_pin_get(const gpio_pin_t *pin) {
     if (pin->port) {
-        return (!!(pin->port->IDR & (GPIO_IDR_IDR0 << pin->pin))) != (pin->polarity == gpio_polarity_low);
+        return (!!(pin->port->IDR & (GPIO_IDR_IDR_0 << pin->pin))) != (pin->polarity == gpio_polarity_low);
     }
     return 0;
 }
