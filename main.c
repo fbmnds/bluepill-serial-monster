@@ -6,6 +6,7 @@
 
 #include <stm32f4xx.h>
 #include "system_clock.h"
+#include "serial.h"
 /*
 #include "system_interrupts.h"
 #include "status_led.h"
