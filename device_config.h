@@ -33,7 +33,7 @@ typedef struct {
     uint32_t otyper;
     uint32_t ospeedr;
     uint32_t afr;
-} pin_t;
+} usart_pin_t;
 
 extern const cdc_port_t port_config[USB_CDC_NUM_PORTS];
 

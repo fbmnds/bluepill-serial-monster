@@ -19,7 +19,7 @@ static void _gpio_enable_port(uint8_t portnum) {
     RCC->AHB1ENR |= (1 << portnum); // e.g., GPIOA=0, GPIOB=1, GPIOC=2
 }
 
-void pin_init(pin_t *pin) {
+void usart_pin_init(usart_pin_t *pin) {
     if (!pin || !pin->port) return;
 
     // Enable GPIO port clock
