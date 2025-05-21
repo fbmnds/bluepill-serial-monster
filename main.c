@@ -17,10 +17,10 @@
 #include "usb_panic.h"
 #include "usb_uid.h"
 #include "circ_buf.h"
-/*
-#include "usb_io.h"
-*/
 #include "usb_cdc.h"
+#include "usb_io.h"
+#include "usb_core.h"
+
 
 #include "status_led.h"
 #include "cdc_config.h"
