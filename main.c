@@ -20,7 +20,10 @@
 /*
 #include "usb_io.h"
 */
+#include "usb_cdc.h"
+
 #include "status_led.h"
+#include "cdc_config.h"
 #include "cdc_shell.h"
 
 /*
