@@ -9,7 +9,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
-#include <stm32f1xx.h>
+#include <stm32f4xx.h>
 #include "usb_std.h"
 #include "usb_io.h"
 

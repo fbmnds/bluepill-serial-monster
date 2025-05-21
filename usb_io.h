@@ -10,7 +10,7 @@
 /* Buffer table */
 
 #include <stddef.h>
-#include <stm32f1xx.h>
+#include <stm32f4xx.h>
 #include "circ_buf.h"
 #include "usb.h"
 #include "usb_std.h"

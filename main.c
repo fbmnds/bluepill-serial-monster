@@ -5,13 +5,29 @@
  */
 
 #include <stm32f4xx.h>
+#include "version.h"
+
+
 #include "system_clock.h"
+
 #include "serial.h"
+
+#include "usb.h"
+#include "usb_std.h"
+#include "usb_panic.h"
+#include "usb_uid.h"
+#include "circ_buf.h"
+/*
+#include "usb_io.h"
+*/
+#include "status_led.h"
+#include "cdc_shell.h"
+
 /*
 #include "system_interrupts.h"
 #include "status_led.h"
 #include "device_config.h"
-#include "usb.h"
+
 */
 
 int main() {
