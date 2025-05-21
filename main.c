@@ -7,7 +7,6 @@
 #include <stm32f4xx.h>
 #include "version.h"
 
-
 #include "system_clock.h"
 
 #include "serial.h"
@@ -20,7 +19,7 @@
 #include "usb_cdc.h"
 #include "usb_io.h"
 #include "usb_core.h"
-
+#include "usb_descriptors.h"
 
 #include "status_led.h"
 #include "cdc_config.h"
@@ -35,10 +34,10 @@
 
 int main() {
     system_clock_init();
+    status_led_init();
     /*
     system_interrupts_init();
     device_config_init();
-    status_led_init();
     usb_init();
     */
     while (1) {

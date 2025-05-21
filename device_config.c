@@ -5,11 +5,15 @@
 
 /* Includes */
 #include <stddef.h>
+#include <limits.h>
 #include "stm32f4xx.h"
 #include "device_config.h"
 
 
+
+
 /* UART pin configuration */
+/*
 const cdc_port_t port_config[USB_CDC_NUM_PORTS] = {
     { // USART1
         .usart = USART1,
@@ -33,3 +37,32 @@ const cdc_port_t port_config[USB_CDC_NUM_PORTS] = {
         .cts_pin = {GPIOC, 9, GPIO_MODER_MODE0, GPIO_OSPEEDR_OSPEED3}
     }
 };
+*/
+
+
+static device_config_t current_device_config;
+
+static uint32_t device_config_calc_crc(const device_config_t *device_config) {
+    uint32_t *word_p = (uint32_t*)device_config;
+    size_t bytes_left = offsetof(device_config_t, crc);
+    CRC->CR |= CRC_CR_RESET;
+    while (bytes_left > sizeof(*word_p)) {
+        CRC->DR = *word_p++;
+        bytes_left -= sizeof(*word_p);
+    }
+    if (bytes_left) {
+        uint32_t shift = 0;
+        uint32_t tail = 0;
+        uint8_t *byte_p = (uint8_t*)word_p;
+        for (int i = 0; i < bytes_left; i++) {
+            tail |= (uint32_t)(*byte_p++) << (shift);
+            shift += CHAR_BIT;
+        }
+        CRC->DR = tail;
+    }
+    return CRC->DR;
+}
+
+device_config_t *device_config_get() {
+    return &current_device_config;
+}

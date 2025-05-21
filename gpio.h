@@ -65,6 +65,10 @@ typedef struct {
     gpio_speed_t        speed;
 } __attribute__ ((packed)) gpio_pin_t;
 
+/*
+void usart_pin_init(usart_pin_t *pin);
+*/
+
 void gpio_pin_init(const gpio_pin_t *pin);
 
 void gpio_pin_set(const gpio_pin_t *pin, int is_active);

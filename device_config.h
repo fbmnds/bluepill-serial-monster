@@ -6,10 +6,29 @@
 #ifndef DEVICE_CONFIG_H
 #define DEVICE_CONFIG_H
 
+
+
 #include "stm32f4xx.h"
+#include "gpio.h"
+#include "cdc_config.h"
 
 #define USB_CDC_NUM_PORTS 3
 
+
+typedef struct {
+    uint32_t        magic;
+    gpio_pin_t      status_led_pin;
+    gpio_pin_t      config_pin;
+    cdc_config_t    cdc_config;
+    uint32_t        crc; /* should be the last member of the struct */
+} __attribute__ ((packed, aligned(4))) device_config_t;
+
+
+void device_config_init();
+device_config_t *device_config_get();
+
+void device_config_save();
+void device_config_reset();
 
 typedef struct {
     GPIO_TypeDef *port;
@@ -18,6 +37,7 @@ typedef struct {
     uint32_t speed; // GPIO_OSPEEDR_OSPEED*
 } pin_config_t;
 
+/*
 typedef struct {
     USART_TypeDef *usart;
     pin_config_t tx_pin;
@@ -25,6 +45,7 @@ typedef struct {
     pin_config_t rts_pin;
     pin_config_t cts_pin;
 } cdc_port_t;
+*/
 
 typedef struct {
     GPIO_TypeDef *port;
@@ -36,5 +57,7 @@ typedef struct {
 } usart_pin_t;
 
 extern const cdc_port_t port_config[USB_CDC_NUM_PORTS];
+
+
 
 #endif /* DEVICE_CONFIG_H */
