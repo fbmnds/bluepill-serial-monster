@@ -107,5 +107,5 @@ clean:
 
 .PHONY: distclean
 distclean: clean
-	rm -rf $(TARGET).elf $(TARGET).hex
+	rm -rf $(TARGET).elf $(TARGET).hex $(TARGET).bin
 
