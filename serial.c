@@ -13,21 +13,22 @@ volatile uint32_t usart6_rx_idx = 0;
 
 
 const cdc_port_t port_config[USB_CDC_NUM_PORTS] = {
-    { // USART1
+  // DS10314 Rev 8, Table 9
+    { // USART1 AF07
         .usart = USART1,
         .tx_pin = {GPIOA, 9, GPIO_MODER_MODE2, GPIO_OSPEEDR_OSPEED3}, // AF, very high speed
         .rx_pin = {GPIOA, 10, GPIO_MODER_MODE2, GPIO_OSPEEDR_OSPEED3}, // AF
-        .rts_pin = {GPIOA, 8, GPIO_MODER_MODE1, GPIO_OSPEEDR_OSPEED3}, // Output
-        .cts_pin = {NULL, 0, 0, 0} // No CTS (USB conflict)
+        .rts_pin = {GPIOA, 12, GPIO_MODER_MODE1, GPIO_OSPEEDR_OSPEED3}, // Output
+        .cts_pin = {GPIOA, 11, GPIO_MODER_MODE0, GPIO_OSPEEDR_OSPEED3} // (No CTS, USB conflict?)
     },
-    { // USART2
+    { // USART2 AF07
         .usart = USART2,
         .tx_pin = {GPIOA, 2, GPIO_MODER_MODE2, GPIO_OSPEEDR_OSPEED3},
         .rx_pin = {GPIOA, 3, GPIO_MODER_MODE2, GPIO_OSPEEDR_OSPEED3},
         .rts_pin = {GPIOA, 1, GPIO_MODER_MODE1, GPIO_OSPEEDR_OSPEED3},
         .cts_pin = {GPIOA, 0, GPIO_MODER_MODE0, GPIO_OSPEEDR_OSPEED3} // Input
     },
-    { // USART6
+    { // USART6 AF08
         .usart = USART6,
         .tx_pin = {GPIOC, 6, GPIO_MODER_MODE2, GPIO_OSPEEDR_OSPEED3},
         .rx_pin = {GPIOC, 7, GPIO_MODER_MODE2, GPIO_OSPEEDR_OSPEED3},

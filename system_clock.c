@@ -85,12 +85,17 @@ void system_clock_init() {
 
 void enable_periph_clocks () {
 
-  /* Enable GPIOA clock */
-  RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN_Msk;
-  RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN_Msk;
-    
-  /* Enable UART clocks */
-  RCC->APB2ENR |= RCC_APB2ENR_USART1EN_Msk | RCC_APB2ENR_USART6EN_Msk;
+  /* Enable GPIOA clock, RM0383, 6.3.9 */
+  //RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN_Msk;
+  //RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN_Msk;
+  RCC->AHB1ENR &= ~(1U << 0);
+  RCC->AHB1ENR |= (1U << 2);
+  
+  /* Enable UART clocks, RM0383, 6.3.12 */
+  //RCC->APB2ENR |= RCC_APB2ENR_USART1EN_Msk | RCC_APB2ENR_USART6EN_Msk;
+  RCC->APB2ENR |= (1U << 4) | (1U << 5);
+
+  /* Enable UART clock, RM0383, 6.3.11 */
   //RCC->APB1ENR |= RCC_APB1ENR_USART2EN_Msk;
   RCC->APB1ENR |= (1U<<17);
 
