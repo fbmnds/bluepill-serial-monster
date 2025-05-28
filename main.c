@@ -28,9 +28,9 @@ void status_led_init() {
     GPIOC->MODER |= (1 << GPIO_MODER_MODER13_Pos);
 
     // Configure SysTick interrupt to fire every 1ms
-    SysTick_Config(SystemCoreClock / 1000);
+    SysTick_Config(SystemCoreClock / 2000);
 
-    __enable_irq();
+    //    __enable_irq();
 }
 
 void SysTick_Handler ()
