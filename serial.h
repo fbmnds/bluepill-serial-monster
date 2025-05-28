@@ -24,6 +24,8 @@ void GPIO_Init(void);
 void UART_Init(void);
 void DMA_Init(void);
 
+void UART_Send(USART_TypeDef *USARTx, uint8_t *data, uint32_t len);
+
 void serial_rx_handler(USART_TypeDef *USARTx, uint8_t data);
 void serial_cts_handler(USART_TypeDef *USARTx);
 void serial_error_handler(USART_TypeDef *USARTx, uint32_t error);

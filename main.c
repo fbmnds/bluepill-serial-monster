@@ -3,6 +3,7 @@
  * 
  * Copyright (c) 2020 Kirill Kotyagin
  */
+#include <string.h>
 
 #include "version.h"
 
@@ -19,7 +20,12 @@
 
 
 int main() {
+  char *msg = "UART/DMA Test Started: Echo mode enabled\r\n";
+  char *shell_msg = "Configuration Shell Active (USART1)\r\n";
+
+
   system_clock_init();
+  enable_periph_clocks ();
   status_led_init();
   system_interrupts_init();
   GPIO_Init();
@@ -30,12 +36,21 @@ int main() {
     usb_init();
 
    */
-  
+
+
+  /* Send test message via USART1 */
+
+  UART_Send(USART1, (uint8_t *)msg, strlen(msg));
 
   while(1)
     {
       status_led_toggle();
       // usb_poll();
+      //      if (!(GPIOA->IDR & GPIO_IDR_ID5)) { // PA5 low
+      //  char *shell_msg = "Configuration Shell Active (USART1)\r\n";
+        UART_Send(USART1, (uint8_t *)shell_msg, strlen(shell_msg));
+        for (volatile uint32_t i = 0; i < 1000000; i++); // Debounce
+        //}
     }
 
 }

@@ -38,16 +38,17 @@ const cdc_port_t port_config[USB_CDC_NUM_PORTS] = {
 
 
 
+
 /**
   * @brief  Initialize GPIO for PA5 (config shell)
   */
 void GPIO_Init(void) {
-    /* Enable GPIOA clock */
-    RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
 
     /* PA5: Input, pull-down */
     GPIOA->MODER &= ~GPIO_MODER_MODE5;
     GPIOA->PUPDR |= GPIO_PUPDR_PUPD5_1;
+
+    __enable_irq();
 }
 
 
@@ -55,9 +56,6 @@ void GPIO_Init(void) {
   * @brief  Initialize UARTs (USART1, USART2, USART6)
   */
 void UART_Init(void) {
-    /* Enable UART clocks */
-    RCC->APB2ENR |= RCC_APB2ENR_USART1EN | RCC_APB2ENR_USART6EN;
-    RCC->APB1ENR |= RCC_APB1ENR_USART2EN;
 
     /* Configure UART pins */
     for (int i = 0; i < USB_CDC_NUM_PORTS; i++) {
@@ -65,9 +63,6 @@ void UART_Init(void) {
         GPIO_TypeDef *gpio = port->tx_pin.port;
         uint32_t pin = port->tx_pin.pin;
 
-        /* Enable GPIO clock */
-        if (gpio == GPIOA) RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN;
-        else if (gpio == GPIOC) RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN;
 
         /* TX: AF push-pull */
         gpio->MODER &= ~GPIO_MODER_MODE0 << (pin * 2);
@@ -93,6 +88,7 @@ void UART_Init(void) {
             pin = port->cts_pin.pin;
             gpio->MODER &= ~GPIO_MODER_MODE0 << (pin * 2);
         }
+        __enable_irq();
     }
 
     /* Configure UARTs: 115200 baud, 8N1, DMA, interrupts */

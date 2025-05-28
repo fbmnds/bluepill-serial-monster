@@ -83,3 +83,16 @@ void system_clock_init() {
 
 }
 
+void enable_periph_clocks () {
+
+  /* Enable GPIOA clock */
+  RCC->AHB1ENR |= RCC_AHB1ENR_GPIOAEN_Msk;
+  RCC->AHB1ENR |= RCC_AHB1ENR_GPIOCEN_Msk;
+    
+  /* Enable UART clocks */
+  RCC->APB2ENR |= RCC_APB2ENR_USART1EN_Msk | RCC_APB2ENR_USART6EN_Msk;
+  RCC->APB1ENR |= RCC_APB1ENR_USART2EN_Msk;
+
+  // ES0287 - Rev 6, 2.2.7
+  __DSB();
+}
