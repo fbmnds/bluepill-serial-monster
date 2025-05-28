@@ -48,11 +48,10 @@ void GPIO_Init(void) {
     GPIOA->MODER &= ~GPIO_MODER_MODE5;
     GPIOA->PUPDR |= GPIO_PUPDR_PUPD5_1;
 
-    __enable_irq();
 }
 
 
-/**
+/**0
   * @brief  Initialize UARTs (USART1, USART2, USART6)
   */
 void UART_Init(void) {
@@ -88,7 +87,6 @@ void UART_Init(void) {
             pin = port->cts_pin.pin;
             gpio->MODER &= ~GPIO_MODER_MODE0 << (pin * 2);
         }
-        __enable_irq();
     }
 
     /* Configure UARTs: 115200 baud, 8N1, DMA, interrupts */

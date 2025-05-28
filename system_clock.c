@@ -91,7 +91,8 @@ void enable_periph_clocks () {
     
   /* Enable UART clocks */
   RCC->APB2ENR |= RCC_APB2ENR_USART1EN_Msk | RCC_APB2ENR_USART6EN_Msk;
-  RCC->APB1ENR |= RCC_APB1ENR_USART2EN_Msk;
+  //RCC->APB1ENR |= RCC_APB1ENR_USART2EN_Msk;
+  RCC->APB1ENR |= (1U<<17);
 
   // ES0287 - Rev 6, 2.2.7
   __DSB();

@@ -21,8 +21,6 @@ void status_led_init() {
 
     // Configure SysTick interrupt to fire every x ms
     SysTick_Config(SystemCoreClock / LED_DELAY);
-
-    __enable_irq();
 }
 
 
