@@ -1,5 +1,5 @@
-#include <string.h>
-#include <stm32f1xx.h>
+//#include <string.h>
+#include <stm32f4xx.h>
 #include "system_interrupts.h"
 
 void system_interrupts_init() {

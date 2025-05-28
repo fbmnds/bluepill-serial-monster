@@ -8,7 +8,7 @@
 #define STATUS_LED
 
 #define LED_PIN 13
-#define LED_DELAY 100
+#define LED_DELAY 200
 
 
 void status_led_init();
