@@ -63,6 +63,30 @@ void UART_Init(void) {
         GPIO_TypeDef *gpio = port->tx_pin.port;
         uint32_t pin = port->tx_pin.pin;
 
+        if (i == 1) {
+
+          // RM0383, 8.4.1
+          // Alternate function mode for PA2
+          GPIOA->MODER |= (2<<4); // bits [5:4] = 1:0 for PA2
+          GPIOA->MODER |= (2<<6); // bits [7:6] = 1:0 for PA3
+
+          GPIOA->OSPEEDR |= (3<<4) | (3<<6); // bits [5:4] and bits [7:6] = 1: for high speed on PA2/PA3
+
+          // RM0383, 8.4.9
+          // set AF07=0111 for PA02 at AFRL2
+
+          GPIOA->AFR[0] |= (1U<<8);
+          GPIOA->AFR[0] |= (1U<<9);
+          GPIOA->AFR[0] |= (1U<<10);
+          GPIOA->AFR[0] &= ~(1U<<11);
+
+          // set AF07=0111 for PA03 at AFRL3
+          GPIOA->AFR[0] |= (1U<<12);
+          GPIOA->AFR[0] |= (1U<<13);
+          GPIOA->AFR[0] |= (1U<<14);
+          GPIOA->AFR[0] &= ~(1U<<15);
+          
+        } else {
 
         /* TX: AF push-pull */
         gpio->MODER &= ~GPIO_MODER_MODE0 << (pin * 2);
@@ -88,11 +112,12 @@ void UART_Init(void) {
             pin = port->cts_pin.pin;
             gpio->MODER &= ~GPIO_MODER_MODE0 << (pin * 2);
         }
+        }
     }
 
     /* Configure UARTs: 115200 baud, 8N1, DMA, interrupts */
     USART_TypeDef *uarts[] = {USART1, USART2, USART6};
-    uint32_t apb_freq[] = {84000000, 42000000, 84000000};
+    uint32_t apb_freq[] = {48000000, 42000000, 84000000};
     for (int i = 0; i < 3; i++) {
         USART_TypeDef *USARTx = uarts[i];
         uint32_t brr = apb_freq[i] / 115200;
