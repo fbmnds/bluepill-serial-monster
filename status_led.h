@@ -8,7 +8,7 @@
 #define STATUS_LED
 
 #define LED_PIN 13
-#define LED_DELAY 800
+#define LED_DELAY 8000
 
 #include "stm32f4xx_it.h"
 
