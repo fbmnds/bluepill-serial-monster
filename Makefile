@@ -1,6 +1,6 @@
 # General Target Settings
 TARGET	= bluepill-serial-monster
-SRCS	= main.c system_clock.c status_led.c system_interrupts.c
+SRCS	= main.c system_clock.c status_led.c stm32f4xx_it.c serial.c
 #\usb_core.c usb_descriptors.c
 # usb_io.c usb_uid.c usb_panic.c usb_cdc.c cdc_shell.c gpio.c device_config.c
 

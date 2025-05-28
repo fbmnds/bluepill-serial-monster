@@ -9,7 +9,7 @@
 #include <stm32f4xx.h>
 #include "system_clock.h"
 #include "status_led.h"
-#include "system_interrupts.h"
+#include "stm32f4xx_it.h"
 /*
 #include "device_config.h"
 #include "usb.h"

@@ -12,7 +12,7 @@
 #include "device_config.h"
 */
 
-volatile uint32_t ticks;
+extern volatile uint32_t ticks;
 
 void status_led_init() {
   
@@ -28,11 +28,6 @@ void status_led_init() {
     SysTick_Config(SystemCoreClock / LED_DELAY);
 
     //    __enable_irq();
-}
-
-void SysTick_Handler ()
-{
-    ticks++;
 }
 
 
