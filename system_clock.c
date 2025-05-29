@@ -26,7 +26,7 @@ void system_clock_init() {
     // 2a. Enable power interface clock
     RCC->APB1ENR |= RCC_APB1ENR_PWREN_Msk;
     // Execute dsb instruction after enabling the peripheral clock, as per the errata
-    __DSB();
+    for (volatile uint32_t i = 0; i<1000000; i++) ;
 
     // 2b. Set regulator voltage scale mode 3 (HCLK <= 64MHz)
     PWR->CR &= ~(PWR_CR_VOS_Msk);
@@ -100,5 +100,5 @@ void enable_periph_clocks () {
   RCC->APB1ENR |= (1U<<17);
 
   // ES0287 - Rev 6, 2.2.7
-  __DSB();
+  for (volatile uint32_t i = 0; i<1000000; i++) ;  
 }

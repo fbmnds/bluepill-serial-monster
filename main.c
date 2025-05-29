@@ -26,11 +26,12 @@ int main() {
 
   system_clock_init();
   enable_periph_clocks ();
-  status_led_init();
-  system_interrupts_init();
+  
+  //  system_interrupts_init();
   GPIO_Init();
-  DMA_Init();
   UART_Init();
+  DMA_Init();
+  status_led_init();
   /*
     device_config_init();
     usb_init();
@@ -40,17 +41,22 @@ int main() {
 
   /* Send test message via USART1 */
 
-  UART_Send(USART1, (uint8_t *)msg, strlen(msg));
+  //UART_Send(USART2, (uint8_t *)msg, strlen(msg));
 
+  serial_rx_handler(USART2, '*');
+  
   while(1)
     {
       status_led_toggle();
       // usb_poll();
-      //      if (!(GPIOA->IDR & GPIO_IDR_ID5)) { // PA5 low
-      //  char *shell_msg = "Configuration Shell Active (USART1)\r\n";
-      UART_Send(USART1, (uint8_t *)shell_msg, strlen(shell_msg));
-      for (volatile uint32_t i = 0; i < 10000; i++); // Debounce
-        //}
+      serial_rx_handler(USART2, '*');
+      //for (volatile uint32_t i = 0; i < 100000; i++); // Debounce
+      /*                  
+      if (!(GPIOA->IDR & GPIO_IDR_ID5)) { // PA5 low
+        //UART_Send(USART2, (uint8_t *)shell_msg, strlen(shell_msg));
+        for (volatile uint32_t i = 0; i < 10000; i++); // Debounce
+      }
+      */
     }
 
 }

@@ -121,7 +121,7 @@ void UART_Init(void) {
     uint32_t apb_freq[] = {48000000, 48000000, 48000000}; // ref. system_clock_init, 4. and 5.
     for (int i = 0; i < 3; i++) {
         USART_TypeDef *USARTx = uarts[i];
-        uint32_t brr = (apb_freq[i] + BAUDR / 2U) / BAUDR;
+        uint32_t brr = (apb_freq[i] + (BAUDR / 2U)) / BAUDR;
 
         USARTx->BRR = brr;
         USARTx->CR1 = USART_CR1_UE | USART_CR1_TE | USART_CR1_RE | USART_CR1_RXNEIE;
@@ -235,7 +235,7 @@ void serial_rx_handler(USART_TypeDef *USARTx, uint8_t data) {
     if (*idx < BUFFER_SIZE) {
         buf[(*idx)++] = data;
         if (data == '\n' || *idx >= BUFFER_SIZE) {
-          UART_Send(USARTx, (uint8_t *)buf, (*idx)-1);
+          UART_Send(USARTx, (uint8_t *)buf, *idx);
             *idx = 0;
         }
     }
