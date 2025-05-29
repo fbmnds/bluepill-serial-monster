@@ -40,7 +40,7 @@ int main() {
 
   /* Send test message via USART1 */
 
-  UART_Send(USART1, (uint8_t *)msg, strlen(msg));
+  UART_Send(USART2, (uint8_t *)msg, strlen(msg));
 
   while(1)
     {
@@ -48,8 +48,8 @@ int main() {
       // usb_poll();
       //      if (!(GPIOA->IDR & GPIO_IDR_ID5)) { // PA5 low
       //  char *shell_msg = "Configuration Shell Active (USART1)\r\n";
-        UART_Send(USART1, (uint8_t *)shell_msg, strlen(shell_msg));
-        for (volatile uint32_t i = 0; i < 1000000; i++); // Debounce
+      UART_Send(USART2, (uint8_t *)shell_msg, strlen(shell_msg));
+      for (volatile uint32_t i = 0; i < 10000; i++); // Debounce
         //}
     }
 

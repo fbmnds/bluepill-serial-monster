@@ -2,7 +2,9 @@
 #include "stm32f4xx.h"
 #include "serial.h"
 
-#define BUFFER_SIZE 100
+#define BAUDR 115200
+#define BUFFER_SIZE 30
+
 
 volatile uint8_t usart1_rx_buf[BUFFER_SIZE];
 volatile uint8_t usart2_rx_buf[BUFFER_SIZE];
@@ -81,10 +83,9 @@ void UART_Init(void) {
           GPIOA->AFR[0] &= ~(1U<<11);
 
           // set AF07=0111 for PA03 at AFRL3
-          GPIOA->AFR[0] |= (1U<<12);
-          GPIOA->AFR[0] |= (1U<<13);
-          GPIOA->AFR[0] |= (1U<<14);
-          GPIOA->AFR[0] &= ~(1U<<15);
+          GPIOA->AFR[0] |= (7<<12); // bits [15:14:13:12] = 0:1:1:1 for PA3
+
+         
           
         } else {
 
@@ -117,10 +118,10 @@ void UART_Init(void) {
 
     /* Configure UARTs: 115200 baud, 8N1, DMA, interrupts */
     USART_TypeDef *uarts[] = {USART1, USART2, USART6};
-    uint32_t apb_freq[] = {48000000, 42000000, 84000000};
+    uint32_t apb_freq[] = {48000000, 48000000, 48000000}; // ref. system_clock_init, 4. and 5.
     for (int i = 0; i < 3; i++) {
         USART_TypeDef *USARTx = uarts[i];
-        uint32_t brr = apb_freq[i] / 115200;
+        uint32_t brr = (apb_freq[i] + BAUDR / 2U) / BAUDR;
 
         USARTx->BRR = brr;
         USARTx->CR1 = USART_CR1_UE | USART_CR1_TE | USART_CR1_RE | USART_CR1_RXNEIE;
@@ -135,6 +136,7 @@ void UART_Init(void) {
 void DMA_Init(void) {
     /* Enable DMA clocks */
     RCC->AHB1ENR |= RCC_AHB1ENR_DMA1EN | RCC_AHB1ENR_DMA2EN;
+    //__DSB();
 
     /* USART1 TX: DMA2 Stream7 Channel4 */
     DMA2_Stream7->CR = (4 << DMA_SxCR_CHSEL_Pos) | // Channel 4
@@ -219,13 +221,25 @@ void serial_rx_handler(USART_TypeDef *USARTx, uint8_t data) {
     volatile uint32_t *idx = (USARTx == USART1) ? &usart1_rx_idx :
                             (USARTx == USART2) ? &usart2_rx_idx : &usart6_rx_idx;
 
+    /*
     if (*idx < BUFFER_SIZE) {
-        buf[(*idx)++] = data;
+      buf[*idx] = data;
         if (data == '\n' || *idx >= BUFFER_SIZE) {
             UART_Send(USARTx, (uint8_t *)buf, *idx);
             *idx = 0;
+        } else {
+          (*idx)++;
         }
     }
+    */
+    if (*idx < BUFFER_SIZE) {
+        buf[(*idx)++] = data;
+        if (data == '\n' || *idx >= BUFFER_SIZE) {
+          UART_Send(USARTx, (uint8_t *)buf, (*idx)-1);
+            *idx = 0;
+        }
+    }
+    
 }
 
 
