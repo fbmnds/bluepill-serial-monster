@@ -43,14 +43,18 @@ int main() {
 
   //UART_Send(USART2, (uint8_t *)msg, strlen(msg));
 
+  serial_rx_handler(USART1, '^');
   serial_rx_handler(USART2, '*');
-  
+  serial_rx_handler(USART6, '$');
+
   while(1)
     {
       status_led_toggle();
       // usb_poll();
-      serial_rx_handler(USART2, '*');
-      //for (volatile uint32_t i = 0; i < 100000; i++); // Debounce
+  serial_rx_handler(USART1, '^');
+  serial_rx_handler(USART2, '*');
+  serial_rx_handler(USART6, '$');
+      for (volatile uint32_t i = 0; i < 1000000; i++); // Debounce
       /*                  
       if (!(GPIOA->IDR & GPIO_IDR_ID5)) { // PA5 low
         //UART_Send(USART2, (uint8_t *)shell_msg, strlen(shell_msg));

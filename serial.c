@@ -1,17 +1,19 @@
 #include <stddef.h>
 #include "stm32f4xx.h"
 #include "serial.h"
+#include "status_led.h"
 
 #define BAUDR 115200
-#define BUFFER_SIZE 30
+#define BUFFER_SIZE 8
 
+extern void delay_ms (uint32_t ms);
 
-volatile uint8_t usart1_rx_buf[BUFFER_SIZE];
-volatile uint8_t usart2_rx_buf[BUFFER_SIZE];
-volatile uint8_t usart6_rx_buf[BUFFER_SIZE];
-volatile uint32_t usart1_rx_idx = 0;
-volatile uint32_t usart2_rx_idx = 0;
-volatile uint32_t usart6_rx_idx = 0;
+static uint8_t usart1_rx_buf[BUFFER_SIZE];
+static uint8_t usart2_rx_buf[BUFFER_SIZE];
+static uint8_t usart6_rx_buf[BUFFER_SIZE];
+static uint32_t usart1_rx_idx = 0;
+static uint32_t usart2_rx_idx = 0;
+static uint32_t usart6_rx_idx = 0;
 
 
 const cdc_port_t port_config[USB_CDC_NUM_PORTS] = {
@@ -118,7 +120,8 @@ void UART_Init(void) {
 
     /* Configure UARTs: 115200 baud, 8N1, DMA, interrupts */
     USART_TypeDef *uarts[] = {USART1, USART2, USART6};
-    uint32_t apb_freq[] = {48000000, 48000000, 48000000}; // ref. system_clock_init, 4. and 5.
+    //    uint32_t apb_freq[] = {48000000, 48000000, 48000000}; // ref. system_clock_init, 4. and 5.
+    uint32_t apb_freq[] = {16000000, 16000000, 16000000};
     for (int i = 0; i < 3; i++) {
         USART_TypeDef *USARTx = uarts[i];
         uint32_t brr = (apb_freq[i] + (BAUDR / 2U)) / BAUDR;
@@ -202,54 +205,50 @@ void DMA_Init(void) {
 void UART_Send(USART_TypeDef *USARTx, uint8_t *data, uint32_t len) {
     DMA_Stream_TypeDef *stream = (USARTx == USART1) ? DMA2_Stream7 :
                                 (USARTx == USART2) ? DMA1_Stream6 : DMA2_Stream6;
-
+    
     stream->CR &= ~DMA_SxCR_EN;
     stream->PAR = (uint32_t)&USARTx->DR;
+    
     stream->M0AR = (uint32_t)data;
     stream->NDTR = len;
-    stream->CR |= DMA_SxCR_EN;
-
-    USARTx->CR3 |= USART_CR3_DMAT;
+    delay_ms(1000);
+    //    stream->CR |= DMA_SxCR_EN;
+    //USARTx->CR3 |= USART_CR3_DMAT;
+    status_led_toggle();
+    
 }
 
 /**
   * @brief  UART RX handler
   */
 void serial_rx_handler(USART_TypeDef *USARTx, uint8_t data) {
-    volatile uint8_t *buf = (USARTx == USART1) ? usart1_rx_buf :
+
+    uint8_t *buf = (USARTx == USART1) ? usart1_rx_buf :
                            (USARTx == USART2) ? usart2_rx_buf : usart6_rx_buf;
-    volatile uint32_t *idx = (USARTx == USART1) ? &usart1_rx_idx :
+    uint32_t *idx = (USARTx == USART1) ? &usart1_rx_idx :
                             (USARTx == USART2) ? &usart2_rx_idx : &usart6_rx_idx;
 
-    /*
-    if (*idx < BUFFER_SIZE) {
-      buf[*idx] = data;
-        if (data == '\n' || *idx >= BUFFER_SIZE) {
-            UART_Send(USARTx, (uint8_t *)buf, *idx);
-            *idx = 0;
-        } else {
-          (*idx)++;
-        }
-    }
-    */
+
     if (*idx < BUFFER_SIZE) {
         buf[(*idx)++] = data;
         if (data == '\n' || *idx >= BUFFER_SIZE) {
+          status_led_toggle();
           UART_Send(USARTx, (uint8_t *)buf, *idx);
-            *idx = 0;
+          *idx = 0;
         }
     }
-    
 }
 
 
 void serial_dma_tx_complete(DMA_Stream_TypeDef *stream) {
     USART_TypeDef *USARTx = (stream == DMA2_Stream7) ? USART1 :
                            (stream == DMA1_Stream6) ? USART2 : USART6;
+    stream->CR |= DMA_SxCR_EN;
     USARTx->CR3 &= ~USART_CR3_DMAT;
 }
 
 void serial_dma_rx_complete(DMA_Stream_TypeDef *stream) {}
+
 void serial_cts_handler(USART_TypeDef *USARTx) {}  
 
 void serial_error_handler(USART_TypeDef *USARTx, uint32_t error) {}
